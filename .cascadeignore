@@ -54,3 +54,6 @@ _site/
 *.exe
 *.o
 *.so
+
+# Script files
+llm_txt.*
