@@ -1,0 +1,7 @@
+---
+# Common variables for all hosts in staging environment
+
+# Example variables - replace with your actual configuration
+env: staging
+ansible_user: ansible
+ansible_become: true

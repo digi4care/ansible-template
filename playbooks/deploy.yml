@@ -1,0 +1,9 @@
+---
+# Deployment playbook for managing deployments
+
+- name: Handle deployment tasks
+  hosts: all
+  become: true
+  
+  roles:
+    - deploy

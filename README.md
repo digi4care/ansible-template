@@ -1,107 +1,159 @@
 # Ansible Project Template
 
-This repository provides a structured template for organizing Ansible projects. It is designed to help you get started quickly with best practices for managing inventories, playbooks, roles, collections, and testing.
+This is a structured template for organizing Ansible projects following best practices. It is designed to help you quickly get started with managing inventories, playbooks, roles, collections, and testing.
 
 ## Project Structure Overview
 
 ```
 .
-├── ansible.example.cfg
-├── collections
-│   └── requirements.yml
-├── example
-│   ├── deployment.yml
-│   └── service.yml
-├── inventory
-│   └── sample
-│       ├── group_vars
-│       │   ├── all.yml
-│       │   └── custom.yml
-│       └── hosts.ini
-├── molecule
-│   └── default
-│       ├── molecule.yml
-│       └── prepare.yml
-├── playbook.yml
-├── README.md
-└── roles
-    └── example_role
-        ├── defaults
-        ├── meta
-        └── tasks
+├── ansible.cfg               # Main Ansible configuration
+├── collections/              # Ansible collections
+│   └── requirements.yml     # Collection dependencies
+├── inventories/             # Inventory files for different environments
+│   ├── production/         # Production environment
+│   │   ├── group_vars/    # Group variables for production
+│   │   ├── host_vars/     # Host-specific variables for production
+│   │   └── hosts.yml      # Production hosts definition
+│   └── staging/           # Staging environment
+│       ├── group_vars/    # Group variables for staging
+│       ├── host_vars/     # Host-specific variables for staging
+│       └── hosts.yml      # Staging hosts definition
+├── playbooks/              # Playbooks directory
+│   ├── site.yml           # Main playbook
+│   ├── webserver.yml      # Webserver configuration
+│   └── database.yml       # Database configuration
+├── roles/                  # Roles directory
+│   ├── common/            # Common configuration role
+│   ├── webserver/         # Webserver role
+│   └── database/          # Database role
+├── files/                  # Static files
+├── templates/              # Jinja2 templates
+└── tests/                  # Test directory
+    └── molecule/          # Molecule test configurations
 ```
 
 ## Explanation of Key Components
 
-### ansible.example.cfg
+### ansible.cfg
 
-This is the main Ansible configuration file. It sets default options such as the inventory file location, disabling host key checking, and disabling retry files. You can customize this file to suit your environment.
+This is the main configuration file for Ansible. It contains default settings such as:
+- Location of inventory files
+- SSH configuration
+- Callback plugins
+- Performance optimizations
 
-### collections/requirements.yml
+### collections/
 
-This file lists the Ansible Collections your project depends on. Collections are bundles of modules, plugins, and roles that extend Ansible’s functionality. Use this file with the command:
+This directory contains the `requirements.yml` that defines all required Ansible Collections. Collections are bundles of modules, plugins, and roles that extend Ansible's functionality. Install collections with:
 
 ```bash
 ansible-galaxy collection install -r collections/requirements.yml
 ```
 
-to install required collections.
+### inventories/
 
-### example/
+Contains environment-specific inventories (production, staging, etc.). Each environment has:
+- `hosts.yml`: Definition of hosts and groups
+- `group_vars/`: Variables for groups of hosts
+- `host_vars/`: Host-specific variables
 
-This directory contains example playbooks such as `deployment.yml` and `service.yml`. These playbooks define tasks and workflows to be executed on your managed hosts.
+### playbooks/
 
-### inventory/
+Contains all playbooks for your automation needs:
+- `site.yml`: The main playbook that imports other playbooks
+- `setup.yml`: Initial setup and configuration
+- `deploy.yml`: Deployment related tasks
 
-The inventory directory holds your host and group definitions.
-
-- `hosts.ini` is an INI-format inventory file listing your hosts and groups.
-- `group_vars/` contains YAML files defining variables for groups of hosts. For example, `all.yml` applies to all hosts, while `custom.yml` can be for a specific group.
-
-### molecule/
-
-This directory is for Molecule testing, which allows you to test your roles and playbooks in isolated environments (e.g., Docker containers).
-
-- `molecule.yml` defines the test scenarios and platforms.
-- `prepare.yml` is a playbook to set up the test environment before running tests.
-
-### playbook.yml
-
-A simple example playbook that runs a ping module against all hosts in the inventory. This is a good starting point to verify connectivity.
+Add more specific playbooks based on your project requirements.
 
 ### roles/
 
-Roles are reusable, modular units of Ansible content. Each role has a standardized directory structure:
+Contains reusable roles with a standardized structure:
+- `common/`: Base configuration for all targets
+- `setup/`: Initial setup and configuration tasks
+- `deploy/`: Deployment and maintenance tasks
 
-- `defaults/` contains default variables for the role.
-- `meta/` contains metadata such as role dependencies.
-- `tasks/` contains the main list of tasks to be executed by the role.
+Each role has the following structure:
+- `defaults/`: Default variables
+- `files/`: Static files
+- `handlers/`: Event handlers
+- `meta/`: Role metadata and dependencies
+- `tasks/`: Main tasks of the role
+- `templates/`: Jinja2 templates
+- `vars/`: Role-specific variables
 
-Using roles helps keep your playbooks clean and promotes reuse.
+### files/ & templates/
+
+- `files/`: Contains static files to be copied to servers
+- `templates/`: Contains Jinja2 templates used in playbooks and roles
+
+### tests/
+
+Contains Molecule test configurations for testing roles and playbooks in isolated environments (e.g., Docker containers):
+- Test scenarios
+- Verifier configuration
+- Test playbooks
 
 ## Getting Started
 
-1. **Configure your inventory:** Edit `inventory/sample/hosts.ini` to list your hosts and groups.
-2. **Define variables:** Add group or host variables in `inventory/sample/group_vars/`.
-3. **Write playbooks:** Use the `example/` directory or create new playbooks to automate tasks.
-4. **Create roles:** Develop roles under `roles/` to organize complex configurations.
-5. **Run playbooks:** Execute your playbooks with:
+1. **Configure your inventory:**
+   ```bash
+   # Copy example files
+   cp -r inventories/staging inventories/production
+   # Edit hosts and variables
+   vim inventories/production/hosts.yml
+   ```
 
-```bash
-ansible-playbook playbook.yml -i inventory/sample/hosts.ini
-```
+2. **Install collections:**
+   ```bash
+   ansible-galaxy collection install -r collections/requirements.yml
+   ```
 
-6. **Test roles:** Use Molecule to test your roles locally before deploying.
+3. **Develop roles:**
+   ```bash
+   # Create a new role
+   ansible-galaxy role init roles/new-role
+   ```
 
-## Additional Tips
+4. **Test your roles:**
+   ```bash
+   cd roles/new-role
+   molecule test
+   ```
 
-- Keep your `ansible.example.cfg` updated with environment-specific settings.
-- Use collections to leverage community or custom modules.
-- Structure your roles logically to maximize reuse.
-- Use Molecule for continuous integration and testing of your Ansible content.
+5. **Run playbooks:**
+   ```bash
+   # Test in staging first
+   ansible-playbook playbooks/site.yml -i inventories/staging/hosts.yml
+   
+   # Then production
+   ansible-playbook playbooks/site.yml -i inventories/production/hosts.yml
+   ```
+
+## Best Practices
+
+1. **Version Control:**
+   - Use Git for version control
+   - Add `.retry` and `*.pyc` files to `.gitignore`
+   - Use branches for major changes
+
+2. **Security:**
+   - Use Ansible Vault for sensitive data
+   - Separate inventories per environment
+   - Regular inventory backups
+
+3. **Testing:**
+   - Test roles with Molecule
+   - Use `--check` mode for dry-runs
+   - Test in staging first
+
+4. **Maintenance:**
+   - Keep collections up-to-date
+   - Document changes
+   - Regular review and refactoring
 
 ---
 
-This template is a solid foundation for building scalable and maintainable Ansible automation projects. Feel free to customize it according to your needs.
+This template provides a solid foundation for scalable and maintainable Ansible automation. Customize it according to your needs.
 
 Happy automating!

@@ -1,0 +1,10 @@
+---
+# Setup playbook for initial configuration
+
+- name: Setup and configure environment
+  hosts: all
+  become: true
+  
+  roles:
+    - common
+    - setup

@@ -1,0 +1,8 @@
+---
+# Main playbook that includes all other playbooks
+
+- name: Include setup configuration
+  import_playbook: setup.yml
+
+- name: Include deployment tasks
+  import_playbook: deploy.yml
