@@ -1,0 +1,25 @@
+# Windsurf AI Behavior Rules
+
+# Algemene gedragsregels voor de AI
+behavior:
+  # Taal voorkeur
+  language: "nl"  # Nederlands als standaard taal
+
+  # Code stijl voorkeuren
+  code_style:
+    indentation: 2
+    max_line_length: 80
+
+  # Documentatie voorkeuren
+  documentation:
+    language: "en"  # Documentatie in het Engels
+    include_examples: true
+
+  # Veiligheidsvoorkeuren
+  security:
+    auto_approve_safe_commands: false  # Vraag altijd om bevestiging voor commando's
+
+  # Project-specifieke regels
+  project:
+    framework: "ansible"
+    test_coverage_threshold: 80
